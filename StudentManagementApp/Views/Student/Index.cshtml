@@ -1,0 +1,38 @@
+@model IEnumerable<StudentManagementApp.Models.Student>
+
+@{
+    ViewData["Title"] = "Student Index";
+}
+
+<h1>Students</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New Student</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Grade</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var student in Model)
+        {
+            <tr>
+                <td>@student.Id</td>
+                <td>@student.Name</td>
+                <td>@student.Age</td>
+                <td>@student.Grade</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@student.Id" class="btn btn-secondary">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@student.Id" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

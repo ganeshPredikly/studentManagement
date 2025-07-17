@@ -1,0 +1,107 @@
+﻿@model IEnumerable<StudentManagementApp.Models.Student>
+@{
+    ViewData["Title"] = "Home";
+}
+
+<h2>Add Student</h2>
+<form asp-controller="Student" asp-action="Create" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="Name">Name</label>
+        <input type="text" name="Name" class="form-control" required />
+    </div>
+    <div class="form-group">
+        <label for="Age">Age</label>
+        <input type="number" name="Age" class="form-control" required min="1" max="120" />
+    </div>
+    <div class="form-group">
+        <label for="Grade">Grade</label>
+        <input type="text" name="Grade" class="form-control" required maxlength="10" />
+    </div>
+    <div class="form-group">
+        <label for="Status">Status</label>
+        <select name="Status" class="form-control" required>
+            <option value="Passed">Passed</option>
+            <option value="Failed">Failed</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>Student Photo</label>
+        <div id="camera" style="margin-bottom:10px;"></div>
+        <button type="button" class="btn btn-secondary" onclick="takeSnapshot()">Take Picture</button>
+        <input type="hidden" name="PhotoData" id="PhotoData" />
+        <div id="snapshotResult" style="margin-top:10px;"></div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Add Student</button>
+</form>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.26/webcam.min.js"></script>
+<script>
+    Webcam.set({
+        width: 240,
+        height: 180,
+        image_format: 'jpeg',
+        jpeg_quality: 90
+    });
+    Webcam.attach('#camera');
+
+    function takeSnapshot() {
+        Webcam.snap(function(data_uri) {
+            document.getElementById('PhotoData').value = data_uri;
+            document.getElementById('snapshotResult').innerHTML = '<img src="' + data_uri + '" style="max-width:100%;" />';
+        });
+    }
+</script>
+<hr />
+
+<h2>Student List</h2>
+<a href="/Canteen" class="btn btn-info mb-3">Go to Canteen Menu</a>
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Grade</th>
+            <th>Meal Card Balance (₹)</th>
+            <th>Canteen</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null)
+        {
+            foreach (var student in Model)
+            {
+                <tr>
+                    <td>@student.Id</td>
+                    <td>@student.Name</td>
+                    <td>@student.Age</td>
+                    <td>@student.Grade</td>
+                    <td>@student.MealCardBalance.ToString("F2")</td>
+                    <td>
+                        <form asp-controller="Home" asp-action="PurchaseFromCanteen" method="post" style="display:inline;">
+                            <input type="hidden" name="studentId" value="@student.Id" />
+                            <input type="number" name="amount" min="1" max="@student.MealCardBalance" placeholder="Amount (₹)" style="width:100px;" required />
+                            <button type="submit" class="btn btn-warning btn-sm">Purchase</button>
+                        </form>
+                    </td>
+                    <td>
+                        @if (student.Status == "Passed")
+                        {
+                            <form asp-controller="Home" asp-action="GenerateCertificate" method="post" style="display:inline;">
+                                <input type="hidden" name="studentId" value="@student.Id" />
+                                <button type="submit" class="btn btn-success">Generate Passing Certificate</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <span class="text-muted">Not eligible</span>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+

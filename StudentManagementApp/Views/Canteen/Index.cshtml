@@ -1,0 +1,72 @@
+@using StudentManagementApp.Controllers
+@{
+    ViewData["Title"] = "Canteen Menu";
+    var items = ViewBag.Items as List<CanteenItem>;
+    var cart = ViewBag.Cart as List<CartItem> ?? new List<CartItem>();
+}
+
+<h2>Canteen Menu</h2>
+<form asp-controller="Canteen" asp-action="AddToCart" method="post">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Price (₹)</th>
+                <th>Quantity</th>
+                <th>Add</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in items)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>@item.Price.ToString("F2")</td>
+                    <td><input type="number" name="quantity" value="1" min="1" style="width:60px;" /></td>
+                    <td>
+                        <button type="submit" name="itemId" value="@item.Id" class="btn btn-primary btn-sm">Add to Cart</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</form>
+
+<h3>Your Cart</h3>
+@if (cart.Count > 0)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Price (₹)</th>
+                <th>Quantity</th>
+                <th>Total (₹)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var ci in cart)
+            {
+                <tr>
+                    <td>@ci.Name</td>
+                    <td>@ci.Price.ToString("F2")</td>
+                    <td>@ci.Quantity</td>
+                    <td>@(ci.Price * ci.Quantity).ToString("F2")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <form asp-controller="Canteen" asp-action="Checkout" method="post">
+        <div class="form-group">
+            <label for="studentId">Student ID</label>
+            <input type="number" name="studentId" class="form-control" required />
+        </div>
+        <button type="submit" class="btn btn-success">Checkout from Meal Card</button>
+    </form>
+}
+else
+{
+    <p>Your cart is empty.</p>
+}
+
+<a href="/" class="btn btn-secondary">Back to Home</a>

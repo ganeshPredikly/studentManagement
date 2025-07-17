@@ -1,0 +1,27 @@
+@model StudentManagementApp.Models.Student
+@{
+    ViewData["Title"] = "Passing Certificate";
+}
+
+@if (Model.Status == "Passed")
+{
+    <div style="border: 4px double #333; padding: 40px; margin: 40px auto; max-width: 600px; background: #f9f9f9; text-align: center;">
+        <h1 style="font-family: serif; color: #2c3e50;">Passing Certificate</h1>
+        <hr style="border-top: 2px solid #2c3e50; width: 80%;" />
+        @if (!string.IsNullOrEmpty(Model.PhotoData))
+        {
+            <img src="@Model.PhotoData" alt="Student Photo" style="width:120px;height:120px;border-radius:50%;margin-bottom:20px;border:2px solid #2980b9;" />
+        }
+        <p style="font-size: 1.2em;">This is to certify that</p>
+        <h2 style="font-family: serif; color: #2980b9;">@Model.Name</h2>
+        <p style="font-size: 1.2em;">has successfully passed grade <strong>@Model.Grade</strong> at age <strong>@Model.Age</strong>.</p>
+        <p style="margin-top: 30px;">Date: <strong>@DateTime.Now.ToString("MMMM dd, yyyy")</strong></p>
+        <p style="margin-top: 40px; font-style: italic;">Congratulations!</p>
+    </div>
+}
+else
+{
+    <div class="alert alert-warning mt-4">This student has not passed and is not eligible for a passing certificate.</div>
+}
+
+<a href="/" class="btn btn-secondary mt-3">Back to Home</a>
